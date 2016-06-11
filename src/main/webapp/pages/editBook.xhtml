@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <p:dialog modal="true" widgetVar="dlgEditBook" dynamic="true" resizable="false" >
+
+            <h:form id="formEditBook"  rendered="#{bookListController.editModeView or bookListController.addModeView}">
+                <p:panelGrid columns="2" columnClasses="col1, col2" styleClass="edit_book_table">
+
+                    <p:panel id="imagePanel">
+                        <h:form enctype="multipart/form-data" id="formUpload">
+                            <p:fileUpload id="imageUpload" label="#{msg.load}" fileUploadListener="#{imageController.fileUploadListener}" 
+                                          sizeLimit="#{imageController.imageMaxSize}" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" multiple="false" />  
+                        </h:form>
+
+                        <h:form enctype="multipart/form-data" id="contentFormUpload">
+                            <p:fileUpload id="contentUpload" label="#{msg.load_pdf}" fileUploadListener="#{contentController.fileUploadListener}" 
+                                          sizeLimit="#{contentController.imageMaxSize}" allowTypes="/(\.|\/)(pdf)$/" multiple="false" />  
+                        </h:form>
+                    </p:panel>
+
+
+                    <p:panel>
+                        <p:panelGrid id="bookDetails" columns="2" >
+                            <strong>#{msg.book_name}: </strong>
+                            <p:inputText id="inputBookName" value="#{bookListController.selectedBook.name}"  required="true" requiredMessage="#{msg.required_field}" size="60"/>
+
+                            <strong>#{msg.author_name}: </strong>
+                            <h:selectOneMenu value="#{bookListController.selectedBook.author}" converter="#{authorController}">
+                                <f:selectItems value="${authorController.selectItems}"/>
+                            </h:selectOneMenu>
+
+                            <strong>#{msg.genre}: </strong>
+                            <h:selectOneMenu  value="#{bookListController.selectedBook.genre}" converter="#{genreController}">
+                                <f:selectItems value="${genreController.selectItems}"/>
+                            </h:selectOneMenu>
+
+                            <strong>#{msg.publisher} </strong>
+                            <h:selectOneMenu  value="#{bookListController.selectedBook.publisher}" converter="#{publisherController}">
+                                <f:selectItems value="${publisherController.selectItems}"/>
+                            </h:selectOneMenu>
+
+                            <strong>#{msg.publish_year} </strong>
+                            <p:inputText id="inputPublishYear" value="#{bookListController.selectedBook.publishYear}" required="true"/>
+
+                            <strong>#{msg.isbn} </strong>
+                            <p:inputText id="inputIsbn" value="#{bookListController.selectedBook.isbn}" required="true"/>
+
+                            <strong>#{msg.page_count} </strong>
+                            <p:inputText id="inputPageCount" value="#{bookListController.selectedBook.pageCount}" required="true" />  
+
+                            <strong>#{msg.descr} </strong>
+
+                            <p:panel >
+                                <p:inputTextarea id="inputDescr" value="#{bookListController.selectedBook.description}" cols="60" rows="20" maxlength="600" 
+                                                 counter="counter" counterTemplate="#{msg.letters_left} {0}"/>
+                                <h:outputText id="counter" />  
+                            </p:panel>
+
+                            <f:facet name="footer">
+                                <p:commandButton styleClass="button-update" value="#{msg.save}" icon="ui-icon-check"  onclick="this.disabled = true;" 
+                                                 update=":formEditBook :booksForm:booksList :booksCount :growlMessage">
+                                    <f:actionListener binding="#{imageController.updateImage()}"/> 
+                                    <f:actionListener binding="#{contentController.updateContent()}"/> 
+                                    <f:actionListener binding="#{bookListController.updateOrInsert()}"/> 
+                                </p:commandButton>
+                                <p:commandButton action="#{bookListController.cancelModes()}" icon="ui-icon-close"  value="#{msg.cancel}" immediate="true" 
+                                                 global="false"/>    
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>
+
